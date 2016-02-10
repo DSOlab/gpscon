@@ -1,2 +1,3 @@
 # gpscon !
-Data transfer for CometNtua network.
+
+Data transfer for COMET/NTUA network.
