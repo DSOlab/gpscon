@@ -11,9 +11,9 @@ we start with:
  - List of stations (.dyndns.org):
      - Peloponnese
          - atiros (*)
-         - keria (*)
+         - keria (*), possibly DOWN
          - kith (*)
-         - kryonri (+)
+         - kryonri (+), possibly DOWN
          - methna (*)
          - methoni (*)
          - vasses (*)
