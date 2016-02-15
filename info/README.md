@@ -13,7 +13,7 @@ we start with:
          - atiros (*)
          - keria (*), possibly DOWN
          - kith (*)
-         - kryonri (+), possibly DOWN
+         - kryonri (+), NOT DOWN
          - methna (*)
          - methoni (*)
          - vasses (*)
