@@ -1,3 +1,5 @@
+var station = "gvds";
+
 var margin = {top: 20, right: 80, bottom: 30, left: 50},
     width  = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -14,7 +16,8 @@ var yAxis = d3.svg.axis().scale(y).orient("left");
 
 var line = d3.svg.line()
     .x(function(d) { return x(dateFormat.parse(d.epoch)); })
-    .y(function(d) { return y(d.size); });
+    .y(function(d) { return y(d.size/1024); });
+    /*.interpolate("monotone");*/
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -22,14 +25,16 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
-d3.json("akyr.json", function(error, data) {
+d3.json("accum.json", function(error, data) {
     if (error) throw error;
     
     var index = 0;
     for (var i=0; i<data.length; i++) {
         // console.log(data[i].info.official_name);
-        index = i;
-        break;
+        if ( data[i].info.official_name == station ) {
+                index = i;
+                break;
+        }
     }
     var obj = data[index];
     // console.log(obj.data);
@@ -41,7 +46,7 @@ d3.json("akyr.json", function(error, data) {
         epoch = ( dateFormat.parse(obj.data[pt].epoch) );
         val   = obj.data[pt]["size"];
         epoch_array.push(epoch);
-        sizes_array.push(val);
+        sizes_array.push(val/1024);
     }
     
     x.domain(d3.extent(epoch_array));

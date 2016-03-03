@@ -5,7 +5,7 @@ import datetime
 import MySQLdb
 import json
 
-rep_file = sys.argv[1]
+rep_files = sys.argv[1:]
 DB_HOST="147.102.110.73"
 DB_USER="xanthos"
 DB_PASS="koko1"
@@ -87,20 +87,21 @@ def get_db_info(station):
             }
 
 data_dict = {}
-with open(rep_file, 'r') as fin:
-    ''' Read a rep file and create a dictionary with key=station_name, value=
-        an array of dictionaries key=epoch:val=size. E.g. 
-        'station':[{'epoch': datetime.datetime(2009, 1, 1, 0, 0), 'size': '331626'},...]
-    '''
-    for line in fin.readlines():
-        ## TODO json cannot serialize datetime instances; casting this to str
-        epoch, tmp_dict = parse_rep_line(line)
-        epoch = str(epoch)
-        for station, size in tmp_dict.iteritems():
-            if station in data_dict:
-                data_dict[station].append({"epoch":epoch, "size":size})
-            else:
-                data_dict[station] = [{"epoch":epoch, "size":size}]
+for rep_file in rep_files:
+    with open(rep_file, 'r') as fin:
+        ''' Read a rep file and create a dictionary with key=station_name, value=
+            an array of dictionaries key=epoch:val=size. E.g. 
+            'station':[{'epoch': datetime.datetime(2009, 1, 1, 0, 0), 'size': '331626'},...]
+        '''
+        for line in fin.readlines():
+            ## TODO json cannot serialize datetime instances; casting this to str
+            epoch, tmp_dict = parse_rep_line(line)
+            epoch = str(epoch)
+            for station, size in tmp_dict.iteritems():
+                if station in data_dict:
+                    data_dict[station].append({"epoch":epoch, "size":size})
+                else:
+                    data_dict[station] = [{"epoch":epoch, "size":size}]
 
 
 ##  Query the database for info on all the stations; the stations that we
