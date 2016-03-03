@@ -48,7 +48,6 @@ d3.json("akyr.json", function(error, data) {
                 .text(function(d) { return d.value.info["official_name"]; });
 
           function transform(d) {
-              console.log("d=",d);
               d = new google.maps.LatLng(d.value.info["latitude"],d.value.info["longtitude"]);
               d = projection.fromLatLngToDivPixel(d);
               return d3.select(this)
