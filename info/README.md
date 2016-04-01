@@ -10,27 +10,30 @@ we start with:
 
  - List of stations (.dyndns.org):
      - Peloponnese
-         - atiros (*)
-         - keria (*), possibly DOWN
-         - kith (*)
-         - kryonri (+), NOT DOWN
-         - methna (*)
-         - methoni (*)
-         - vasses (*)
+         - atiros (-)
+         - keria (x)
+         - kith (+)
+         - kryonri (=)
+         - methna (-)
+         - methoni (x)
+         - vasses (x)
      - Santorini
-         - mikrakmn (-)
-         - sntr (*)
+         - mikrakmn (=)
+         - sntr (x)
      - Crete
-         - akyr (*)
-         - gavds (*)
-         - neap (*)
-         - xris (*)
+         - akyr (+)
+         - gavds (x)
+         - neap (+)
+         - xris (+)
 
+kryonri has only MOXA NPort 5210A.
+mikrakmn has only SIERRA WIRELESS AirLink LS300.
+All other have both.
 
-NOT SURE, but I think:
+(+) kith, akyr, neap and xris are being downloaded with reasonably good speed.
 
-(*) MOXA NPort 5210A, SIERRA WIRELESS AirLink LS300
+(-) atiros and methna are being downloaded very slowly.
 
-(+) MOXA NPort 5210A only
+(x) keria, methoni, vasses, sntr and gavds are not responding.
 
-(-) SIERRA WIRELESS AirLink LS300 only
+(=) kryonri and mikrakmn are not tested.
