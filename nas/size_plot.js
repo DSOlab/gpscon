@@ -17,7 +17,6 @@ var yAxis = d3.svg.axis().scale(y).orient("left");
 var line = d3.svg.line()
     .x(function(d) { return x(dateFormat.parse(d.epoch)); })
     .y(function(d) { return y(d.size/1024); });
-    /*.interpolate("monotone");*/
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -30,14 +29,12 @@ d3.json("accum.json", function(error, data) {
     
     var index = 0;
     for (var i=0; i<data.length; i++) {
-        // console.log(data[i].info.official_name);
         if ( data[i].info.official_name == station ) {
                 index = i;
                 break;
         }
     }
     var obj = data[index];
-    // console.log(obj.data);
 
     var epoch_array = [],
         sizes_array = [];

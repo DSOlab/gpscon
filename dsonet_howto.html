@@ -1,0 +1,288 @@
+ <!DOCTYPE html>
+<html>
+<head>
+  <style>
+    span.path {
+      font-size: 90%;
+      background-color: #f0f0f0;
+      font-family: courier;
+    }
+    span.cmd {
+      font-size: 100%;
+      background-color: rgb(231, 210, 214);
+      color: rgb(60, 60, 60);
+      font-family: courier;
+      white-space: nowrap;
+    }
+    span.sout {
+      display: block;
+      font-size: 80%;
+      border: 2px solid DodgerBlue;
+      background-color: rgb(255, 255, 255);
+      color: rgb(60, 60, 60);
+      font-family: courier;
+      white-space: pre;
+    }
+  </style>
+  <title>NtuaNet CheatSheet</title>
+</head>
+<body>
+  <h1>What is this document about?</h1>
+  <p>This s a description or cheatsheet, for handling communication and 
+  handling of the majority of the Ntua/Oxford GPS stations. It is relevant to
+  all stations of type <em>TRIMBLE 5700</em> connected a <em>MOXA NPort 5210A</em> 
+  device server and possibly a ntwork provider of some kind (mostly that is 
+  a <em>SIERRA WIRELESS AirLink LS300</em> device).</p>
+
+  <h1>On-Site Installation</h1>
+  <p style="background-color:powderblue;">ToDo</p>
+
+  <h1>MOXA NPort 5210A</h1>
+  <h2>Driver Installation</h2>
+  <p>To use the <em>MOXA NPort 5210A</em> device we need to install its driver. 
+  Currently we use the version <b>ver1.19.11 Build 19012814</b>. Source code for
+  the driver can be found at <span class="path">bpe@hypatia:/home/bpe/moxa/npreal2_mainline_v1.19.11_build_19012814.tgz</span>. 
+  Installation is easy, just run <span class="cmd">$> sudo ./mxinst m64</span> 
+  (where <b>m64</b> defines a 64bit architecture). This will normally install 
+  all relevant files/programs in <span class="path">/usr/lib/npreal2</span>.</p>
+  <p>I (xanthos) have succeded inst installing the driver on <em>Ubuntu</em> and 
+  <em>Debian</em> disotrs but not in <em>Fedora</em>. <mark>Note that before installing, 
+  you have to have the kernel-headers installed on the system</mark> (e.g.
+  <a href="https://www.tecmint.com/install-kernel-headers-in-ubuntu-and-debian/">for Debian-based</a>
+  distros).</p>
+  
+  <h2>Driver @ hypatia</h2>
+  <p>The <em>MOXA NPort 5210A</em> driver is available at hypatia, at
+  <span class="path">bpe@hypatia:/usr/lib/npreal2/</span>. Via the driver, 
+  we can use NPort serial port as local tty port. <mark>Note that the following paragraphs
+  assert a <b>Real COM Mode</b>, that is before mapping tty ports, you must 
+  be sure that (or else set) the operation mode of your NPort is <em>Real COM Mode</em></mark>.
+  This information can be seen on the MOXA's web interface.</p>
+  
+  <h3>Version</h3>
+  <p>To check the installed version, see the file
+  <span class="path">bpe@hypatia:/usr/lib/npreal2/VERSION.TXT</span>. </p>
+
+  <h3>Logs & Configuration</h3>
+  <p>The log file for driver-related activities, is 
+  <span class="path">bpe@hypatia:/usr/lib/npreal2/driver/npreal2d.log</span>.</p>
+  <p>The configuration file is 
+  <span class="path">bpe@hypatia:/usr/lib/npreal2/driver/npreal2d.cf</span>. This 
+  file changes whenever a new port is mapped (added or removed).</p>
+
+  <h3>Mapping Ports</h3>
+  <p>If a <em>MOXA NPort 5210A</em> device is up and running, we can map it to
+  a system's port, via the command:
+  <span class="cmd">mxaddsvr [NPort IP Address] [Total Ports] ([Data port] [Cmd port])</span>.
+  For example, the following command works just fine and is <mark>what we normally use</mark>:
+  <span class="cmd">$> sudo ./mxaddsvr kith.dyndns.org 1 950 966</span>. 
+  The command should report (on screen) amessage of type:
+  <span class="sout">
+   Adding Server...
+  
+   ttyr00, cur00
+   Added RealCom server: ip : kith.dyndns.org
+  
+   mknod -m 666 ttyr00 c 33 0
+   mknod -m 666 cur00 c 38 0
+   Complete.
+  </span>
+  <em>We can now send serial commands to the GPS receiver, via the MOXA device, using
+  the tty port ttyr00</em>. The configuration file should also have changed to
+  include a line:
+  <span class="sout">
+  #[Minor] [ServerIP]	[data]	[cmd]	[FIFO]	[SSL]	[ttyName] [coutName] [interface][mode][BackIP]
+  0	kith.dyndns.org	950	966	1	0	ttyr00	cur00	0	0
+  </span>
+  The log file <span class="path">npreal2d.log</span> should also have the change
+  recorded, something like:
+  <span class="sout">
+  07-02-2019 12:24:32  MOXA Real TTY daemon program starting (Ver1.19.9 Build 18120514)...
+  07-02-2019 12:24:32  MOXA Real TTY daemon program starting (Ver1.19.9 Build 18120514)...
+  </span>
+  </p>
+
+  <h4>Removing Mapped Ports</h4>
+  <p>To remove an (already) mapped port, enter the command <span class="cmd">mxdelsvr [NPort IP Address]</span>.
+  For example, use <span class="cmd">$> sudo ./mxdelsvr kith.dyndns.org</span> to
+  removed the mapped port(s) for <em>kith.dyndns.org</em>. This will result in
+  <span class="sout">
+   Delete Server ...
+   rm -f /dev/ttyr00
+   rm -f /dev/cur00
+   Deleted server: kith.dyndns.org
+  
+   Complete.
+  </span>
+  and the configuration file should now not include <em>kith.dyndns.org</em>.
+  </p>
+  
+  <h1>rutils</h1>
+  <p>Communication with the <em>TRIMBLE 5700</em> receivers is performed via the 
+  <em>MOXA</em> devices using the <em>rutils</em> package. <mark>Obviously, to use 
+  <em>rutils</em> a corresponding tty mapping must have been performed.</mark></p>
+  <p>For the next examples, lets assume we have a<em>TRIMBLE 5700</em> receiver, 
+  reachable at <em>kith.dyndns.org</em> and we have already successefuly mapped a
+  local tty port to send commands to it. The <em>MOXA</em> port(s) is set to <b>Real COM</b> mode
+  and the baude rate is <b>19200</b>.</p>
+
+  <h2>rutils @ hypatia</h2>
+  <p>The <em>rutils</em> tools are installed at hypatia, at 
+  <span class="path">/home/bpe/applications/LAPDOGS/bin</span>.</p>
+
+  <h2>Basic Usage</h2>
+  <p>Nealry all of the <em>rutils</em> programs, use a syntax like:
+  <span class="cmd">$>progname -Ddevice –Bbaud –Pparity [--rtscts]</span>, which 
+  in our case translates to <span class="cmd">$>progname -D/dev/ttyr00 -Pn -B19200 --rtscts [...]</span>.
+  You can check the MOXA condfiguration file 
+  <span class="path">bpe@hypatia:/usr/lib/npreal2/driver/npreal2d.cf</span> to see 
+  the local tty port the mapping is performed at (it may be different than 
+  <span class="path">/dev/ttyr00</span>).
+  </p>
+
+  <h3>Receiver File Listing</h3>
+  <p>List all files available at the receiver in chronological order:
+  <span class="sout">
+  $> sudo ./rfile -D/dev/ttyr00 -Pn -T -B19200 --rtscts
+  5700-RC REMOTE CONTROL, v2.51 TEST Linux (Mar 30 2001)
+  Copyright (c) 1993-2001 Trimble Navigation Limited.  All rights reserved.
+  ./rfile, 2.73
+  Storing new device file name (/dev/ttyr00).
+  CRTSCTS is Disabled
+  Port initialized (19200 baud, 8 data bits, None, 1 stop bit)
+  Testing communications link...wait.
+  Testing receiver configuration
+  Getting directory
+
+  Flushing receive buffers.
+    Read     1 bytes
+
+  ***** RFILE BEGIN DIRECTORY
+
+  NAME           TIME                       BYTES
+  ____________   ___________________   __________
+  83101790.T1D   06-28-2019 09:59:06        24255
+  83101791.T01   06-28-2019 10:03:44       275850
+     SYSTEM~1\   06-28-2019 11:05:22            0
+  83101800.T01   06-29-2019 00:00:20       441795
+  83101810.T01   06-30-2019 00:00:20       441413
+  83101820.T01   07-01-2019 00:00:20       442457
+  83101830.T01   07-02-2019 00:00:20       157153
+  ***** RFILE END DIRECTORY
+
+
+  Total number of files 07 Size 1782923 bytes
+  Done.
+  </span>
+  </p>
+  
+  <h3>Download a File</h3>
+  <p>Download file <span class="path">83101820.T01</span> (Note that :
+  <ol>
+    <li>the downloaded file will be named exactly as the original one (e.g. here 
+    <span class="path">83101820.T01</span>). If we want the downloaded file to 
+    have a different name, then we use the <b>I</b> switch as: 
+    <b>-I83101810.T01,foo</b>; this will result in the local file being named
+    as <span class="path">foo</span></li>
+    <li>the switch <b>-Fn_packets[,packet_size]]</b> is optional; skipping it is fine 
+    (but will probablt result in longer download time) and if really in a hurry 
+    you can also try <b>-F100,1024</b>.</li>
+  </ol>
+  <span class="sout">
+  $> sudo ./rfile -D/dev/ttyr00 -Pn -B19200 --rtscts -I83101810.T01 -F500,512
+  
+  5700-RC REMOTE CONTROL, v2.51 TEST Linux (Mar 30 2001)
+  Copyright (c) 1993-2001 Trimble Navigation Limited.  All rights reserved.
+  ./rfile, 2.73
+  NPackets 500
+  file_piece_size_requested 512
+  Storing new device file name (/dev/ttyr00).
+  CRTSCTS is Disabled
+  Port initialized (19200 baud, 8 data bits, None, 1 stop bit)
+  Flushing receive buffers.
+    Read     2 bytes
+
+  Testing communications link...wait.
+  Testing receiver configuration
+  Getting directory
+
+  Flushing receive buffers.
+    Read     1 bytes
+
+  Downloading File name: 83101810.T01 size:441413 bytes
+  Output --> 83101810.T01
+  Flushing receive buffers.
+    Read     2 bytes
+
+  Transferred 441413 bytes in 246.00 seconds.
+
+  Done.
+  </span>
+  </p>
+  
+  <h3>Delete File on Receiver</h3>
+  <p>Delete file <span class="path">83101790.T1D</span>:
+  <span class="sout">
+  $>sudo ./rfile -K83101790.T1D -D/dev/ttyr00 -Pn -B19200 --rtscts
+  
+  5700-RC REMOTE CONTROL, v2.51 TEST Linux (Mar 30 2001)
+  Copyright (c) 1993-2001 Trimble Navigation Limited.  All rights reserved.
+  ./rfile, 2.73
+  Storing new device file name (/dev/ttyr00).
+  CRTSCTS is Disabled
+  Port initialized (19200 baud, 8 data bits, None, 1 stop bit)
+  Testing communications link...wait.
+  Testing receiver configuration
+  Getting directory
+
+  Flushing receive buffers.
+    Read     1 bytes
+
+  Deleting file (Name: 83101790.T1D).
+  Done.
+  </span>
+  </p>
+
+  <h1>Translating .T00 (Trimble) Files to RINEX</h1>
+  <p>To translate the <b>T00</b> (raw) files to RINEX, we need to:
+  <ol>
+    <li>first translate the <b>T00</b> file to <b>dat</b>; this is performed via
+    the <em>runpkr00</em> program. Note that <em>runpkr00</em> is part of 
+    the <em>rutils</em> package and hence is available at 
+    <span class="path">bpe@hypatia:/home/bpe/applications/LAPDOGS/bin</span>. 
+    <mark>However this version seems to encounter problems with some files, so 
+    you better use the system-provided runpkr00 program, available at 
+    <span class="path">bpe@hypatia:/usr/local/bin/runpkr00</span></mark>. The
+    usage is simple, e.g. to transform the file <span class="path">83101810.T00</span> 
+    producing a <b>dat</b>, an ephemeris file and useverbose printing, run:
+    <span class="cmd">$>runpkr00 -deimv 83101810.T00</span>. This should result in 
+    four new files, <span class="path">83101810.dat</span>, 
+    <span class="path">83101810.eph</span>,
+    <span class="path">83101810.ion</span> and 
+    <span class="path">83101810.mes</span>
+    </li>
+
+    <li>Next we need to translate the <b>dat</b> file to RINEX format; this is 
+    done via the <em>teqc</em> software as simple as:
+     <span class="cmd">$>teqc -tr d 83101810.dat > foo.rnx</span> to produce 
+     the RINEX file <span class="path">foo.rnx</span>.</li>
+  </ol>
+  </p>
+
+  <h1>APPENDIX</h1>
+
+  <h2>NTUA teqc switches</h2>
+  <p>When translating final <b>dat</b> files to RINEX for dissemination, use the 
+  following list of flags:
+  <ul>
+    <li>-O.an '...' to set RINEX OBS header antenna number</li>
+    <li>-O.at '...' to set RINEX OBS header antenna type (and radome type) </li>
+    <li>-O.ag '...' to set RINEX OBS header operating agency </li>
+    <li>-O.int '...' to set RINEX OBS header observation interval to # (>0.) seconds</li>
+    <li>-O.mn '...' to set RINEX OBS header monument number</li>
+    <li>-O.mo '...' to set RINEX OBS header monument name</li>
+    <li>-O.o '...' to set RINEX OBS header operator name</li>
+  </ul>
+
+</body>
+</html> 
