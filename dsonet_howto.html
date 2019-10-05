@@ -23,6 +23,15 @@
       font-family: courier;
       white-space: pre;
     }
+    table.details, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 15px;
+    }
+    table.details, td {
+      font-family:"Courier New", Courier, monospace;
+      font-size:80%;
+    }
   </style>
   <title>NtuaNet CheatSheet</title>
 </head>
@@ -283,6 +292,48 @@
     <li>-O.mo '...' to set RINEX OBS header monument name</li>
     <li>-O.o '...' to set RINEX OBS header operator name</li>
   </ul>
+
+  <h2>Station Details</h2>
+  <table class="details">
+    <tr>
+      <th>Name/Code</th>
+      <th colspan="4">MOXA</th>
+      <th colspan="4">Sierra</th>
+      <th>Comments</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th>Model/Serial</th>
+      <th>Internal IP</th>
+      <th>User/Pass</th>
+      <th>Comment</th>
+      <th>Model/Serial</th>
+      <th>Static IP</th>
+      <th>User/Pass</th>
+      <th>Comment</th>
+      <th></th>
+    </tr>
+    <tr>
+      <td>akyr</td>
+      <td>NPort 5210A/7518</td>
+      <td>192.168.13.100</td>
+      <td>admin/moxa</td>
+      <td><ul>
+        <li>FirmWare: 1.5 Build 19032122</li>
+        <li>Internal ip is set to DHCP (served by Sierra)</li>
+        </ul>
+      </td>
+      <td>ca91794043410</td>
+      <td>akyr.dyndns.org</td>
+      <td>user/12345</td>
+      <td></td>
+      <td><ul>
+        <li>Installation Date 04 Oct 2019</li>
+        <li>GPS Receiver Serial 0220301071</li>
+        <li>GPS Antenna has DOME</li>
+      </ul></td>
+    </tr>
+  </table>
 
 </body>
 </html> 
