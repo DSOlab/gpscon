@@ -1,6 +1,15 @@
  <!DOCTYPE html>
 <html>
 <head>
+  <title>NtuaNet CheatSheet</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.css"/>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script>
   <style>
     span.path {
       font-size: 90%;
@@ -23,19 +32,51 @@
       font-family: courier;
       white-space: pre;
     }
+    /*
     table.details, th, td {
       border: 1px solid black;
       border-collapse: collapse;
       padding: 15px;
     }
-    table.details, td {
+    */
+    table.gps-station-details, td {
       font-family:"Courier New", Courier, monospace;
       font-size:80%;
     }
+    nav[data-toggle="toc"] {
+      top: 42px;
+    }
+    /* small screens */
+    @media (max-width: 768px) {
+    /* override stickyness so that the navigation does not follow scrolling */
+      nav[data-toggle="toc"] {
+      margin-bottom: 42px;
+      position: static;
+    }
+    /* PICK ONE */
+    /* don't expand nested items, which pushes down the rest of the page when navigating */
+      nav[data-toggle="toc"] .nav .active .nav {
+      display: none;
+    }
+    /* alternatively, if you *do* want the second-level navigation to be shown (as seen on this page on mobile), use this */
+    /*
+      nav[data-toggle='toc'] .nav .nav {
+      display: block;
+    }
+    */
+  }
   </style>
-  <title>NtuaNet CheatSheet</title>
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
+  <div class="container">
+  <div class="row">
+  <!-- sidebar, which will move to the top on a small screen -->
+  <div class="col-md-3">
+    <nav id="toc" data-toggle="toc"></nav>
+  </div>
+
+  <!-- main content area -->
+  <div class="col-md-9">
   <h1>What is this document about?</h1>
   <p>This s a description or cheatsheet, for handling communication and 
   handling of the majority of the Ntua/Oxford GPS stations. It is relevant to
@@ -44,6 +85,25 @@
   a <em>SIERRA WIRELESS AirLink LS300</em> device).</p>
 
   <h1>On-Site Installation</h1>
+  <p>GPS to MOXA cable connection should be:
+  <table class="table gps-moxa-table">
+    <thead>
+      <tr>
+        <th scope="col">GPS Port</th>
+        <th scope="col">MOXA Port</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>3</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>2</td>
+      </tr>
+    </tbody>
+  </table>
   <p style="background-color:powderblue;">ToDo</p>
 
   <h1>MOXA NPort 5210A</h1>
@@ -294,7 +354,8 @@
   </ul>
 
   <h2>Station Details</h2>
-  <table class="details">
+  <table class="table table-bordered table-hover table-responsive-sm gps-station-details">
+  <thead class="thead-light">
     <tr>
       <th>Name/Code</th>
       <th colspan="4">MOXA</th>
@@ -313,6 +374,8 @@
       <th>Comment</th>
       <th></th>
     </tr>
+  </thead>
+  <tbody>
     <tr>
       <td>akyr</td>
       <td>NPort 5210A/7518</td>
@@ -326,14 +389,117 @@
       <td>ca91794043410</td>
       <td>akyr.dyndns.org</td>
       <td>user/12345</td>
-      <td></td>
+      <td><ul>
+        <li>Sierra Web-Gui is accessible at port 9191</li>
+        <li>Port forwarding rules are: (see sierra-akyr-2.png)<ul>
+          <li>8080 -> MOXA:80</li>
+          <li>23 -> MOXA:23</li>
+          <li>950 -> MOXA:950</li>
+          <li>951 -> MOXA:951</li>
+          <li>966 -> MOXA:966</li>
+          <li>967 -> MOXA:967</li></ul>
+        </ul>
+      </td>
       <td><ul>
         <li>Installation Date 04 Oct 2019</li>
         <li>GPS Receiver Serial 0220301071</li>
         <li>GPS Antenna has DOME</li>
       </ul></td>
     </tr>
+    <tr>
+      <td>neap</td>
+      <td>NPort 5210A/7515</td>
+      <td>192.168.13.100</td>
+      <td>admin/moxa</td>
+      <td><ul>
+        <li>FirmWare: 1.5 Build 19032122</li>
+        <li>Internal ip is set to DHCP (served by Sierra)</li>
+        </ul>
+      </td>
+      <td>jp53320374001010</td>
+      <td>neap.dyndns.org</td>
+      <td>user/12345</td>
+      <td><ul>
+        <li>Sierra Web-Gui is accessible at port 9191</li>
+        <li>Port forwarding rules are: (see sierra-neap-2.png)<ul>
+          <li>8080 -> MOXA:80</li>
+          <li>23 -> MOXA:23</li>
+          <li>950 -> MOXA:950</li>
+          <li>951 -> MOXA:951</li>
+          <li>966 -> MOXA:966</li>
+          <li>967 -> MOXA:967</li></ul>
+        </ul>
+      </td>
+      <td><ul>
+        <li>Installation Date 04 Oct 2019</li>
+        <li>GPS Receiver Serial 0220301082</li>
+        <li style="background-color:powderblue;">GPS Antenna has DOME</li>
+      </ul></td>
+    </tr>
+    <tr>
+      <td>gvds</td>
+      <td>NPort 5210A/7483</td>
+      <td>192.168.13.100</td>
+      <td>admin/moxa</td>
+      <td><ul>
+        <li>FirmWare: 1.5 Build 19032122</li>
+        <li>Internal ip is set to DHCP (served by Sierra)</li>
+        </ul>
+      </td>
+      <td>ca90244045210</td>
+      <td>gavds.dyndns.org</td>
+      <td>user/12345</td>
+      <td><ul>
+        <li>Sierra Web-Gui is accessible at port 9191</li>
+        <li>Port forwarding rules are: (see sierra-gvds-2.png)<ul>
+          <li>8080 -> MOXA:80</li>
+          <li>23 -> MOXA:23</li>
+          <li>950 -> MOXA:950</li>
+          <li>951 -> MOXA:951</li>
+          <li>966 -> MOXA:966</li>
+          <li>967 -> MOXA:967</li></ul>
+        </ul>
+      </td>
+      <td><ul>
+        <li>Installation Date 07 Oct 2019</li>
+        <li>GPS Receiver Serial 0220298303</li>
+      </ul></td>
+    </tr>
+    <tr>
+      <td>xris</td>
+      <td>NPort 5210A/7468</td>
+      <td>192.168.13.100</td>
+      <td>admin/moxa</td>
+      <td><ul>
+        <li>FirmWare: 1.5 Build 19032122</li>
+        <li>Internal ip is set to DHCP (served by Sierra)</li>
+        </ul>
+      </td>
+      <td>jq82030064001011</td>
+      <td>xris.dyndns.org</td>
+      <td>user/12345</td>
+      <td><ul>
+        <li>Sierra Web-Gui is accessible at port 9191</li>
+        <li>Port forwarding rules are: (see sierra-xris-2.png)<ul>
+          <li>8080 -> MOXA:80</li>
+          <li>23 -> MOXA:23</li>
+          <li>950 -> MOXA:950</li>
+          <li>951 -> MOXA:951</li>
+          <li>966 -> MOXA:966</li>
+          <li>967 -> MOXA:967</li></ul>
+        </ul>
+      </td>
+      <td><ul>
+        <li>Installation Date 12 Oct 2019</li>
+        <li>GPS Receiver Serial 0220298313</li>
+        <li>Changed antenna and antenna cable (12 Oct 2019)</li>
+      </ul></td>
+    </tr>
+    </tbody>
   </table>
+  </div>
+  </div>
+  </div>
 
 </body>
 </html> 
