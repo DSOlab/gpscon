@@ -337,6 +337,47 @@
      the RINEX file <span class="path">foo.rnx</span>.</li>
   </ol>
   </p>
+  
+  <h1>Automated Scripts</h1>
+  <p>A collection of bash shell scripts is available to assist the connection to,
+  acquisition, transformation and uploading of the daily receiver files. These
+  scripts are installed at <span class="path">bpe@hypatia:/home/bpe/applications/gpscon_bin</span>.
+  Note that you need root privileges to execute them. All of the scripts have a 
+  <u>help message</u> available via the '-h' switch.</p>
+  <p>The list of scripts is:
+  <ul>
+    <li><span class="cmd">con2sta.sh</span> facilitate connection to a TRIMBLE 5700 
+      receiver via a MOXA NP driver. It is a basic wrapper of the mxaddsvr 
+      program of the NPREAL driver routines</li>
+    <li><span class="cmd">delfromrec.sh</span> facilitate removing file(s) from 
+      a TRIMBLE 5700 receiver via a MOXA NP driver and the TRIMBLE R-utlis 
+      package.</li>
+    <li><span class="cmd">delsta.sh</span> facilitate the end of a connection 
+      to a TRIMBLE 5700 receiver via a MOXA NP driver. It is a basic wrapper 
+      of the mxdelsvr program of the NPREAL driver routines</li>
+    <li><span class="cmd">getfile.sh</span> facilitate downloading from a TRIMBLE 
+      5700 receiver via a MOXA NP driver and the TRIMBLE R-utlis package. It is 
+      a basic wrapper of the rfile program, of the R-utils routines</li>
+    <li><span class="cmd">ntua_push2babylon.sh</span> enables the (ftp) push of 
+      a list of files to Ntua's babylon NAS</li>
+    <li><span class="cmd">ntua_rnx30.sh</span> facilitate the connection, downloading 
+      transformation and uploading of GPS receiver files to NTUA's ftp server</li>
+    <li><span class="cmd">trm_raw2rnx.sh</span> performs the transformation of 
+      a raw TRIMBLE 5700 T00 file to a RINEX v2.x file</li>
+  </ul></p>
+  <p>The script <span class="cmd">ntua_rnx30.sh</span> uses all of the above scripts
+  to automatically connect to a receiver, download a file (for a given date),
+  transform the file to RINEX v2.x, delete it from the receiver, upload the RINEX
+  to babylon ftp server and close the connection to the receiver. It is used in 
+  the (root's) cron table and is ignited every morning. The (RINEX) files should
+  be available at <a href="ftp://147.102.106.135/pub/gnss/data/daily/">ftp://147.102.106.135/pub/gnss/data/daily/YYYY/DDD</a></p>
+  <h2>TODO</h2>
+  <p>
+  <ul>
+    <li>Scripts should delete temporary files</li>
+    <li>Handle cases when more than one files are available on the receiver for the same day</li>
+    <li>Create log file from cron run of ntua_rnx30.sh</li>
+  </ul></p>
 
   <h1>APPENDIX</h1>
 
@@ -466,7 +507,7 @@
       </ul></td>
     </tr>
     <tr>
-      <td>xris</td>
+      <td>xrso</td>
       <td>NPort 5210A/7468</td>
       <td>192.168.13.100</td>
       <td>admin/moxa</td>
@@ -493,6 +534,7 @@
         <li>Installation Date 12 Oct 2019</li>
         <li>GPS Receiver Serial 0220298313</li>
         <li>Changed antenna and antenna cable (12 Oct 2019)</li>
+        <li>Receiver files are named as '8312$DDD.T0?' and **NOT** '8313$DDD.T0?' which should be the case given the receiver's serial</li>
       </ul></td>
     </tr>
     </tbody>
